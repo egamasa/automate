@@ -2,11 +2,12 @@
 
 import config
 import datetime
-import json
 import re
 import requests
 import time
 from bs4 import BeautifulSoup
+from logger import logger
+
 
 LOGIN_URL = 'https://usappy.jp/login'
 LOGOUT_URL = 'https://usappy.jp/logout'
@@ -28,13 +29,6 @@ SCRIPT_NAME = config.SCRIPT_NAME
 
 def sleep():
     time.sleep(1)
-
-
-def json_log(logLevel, message):
-    return json.dumps({
-        "serverity": logLevel,
-        "message": message,
-    })
 
 
 # Endpoint of Google Cloud Functions -> main()
@@ -64,13 +58,9 @@ def main(event={}, context={}):
         ses.get(LOGOUT_URL, cookies=cookie)
 
     except requests.exceptions.RequestException as e:
-        print(
-            json_log('ERROR',
-                     f"[{SCRIPT_NAME}] {e}"))
+        logger.error(f"[{SCRIPT_NAME}] {e}")
     else:
-        print(
-            json_log('INFO',
-                     f"[{SCRIPT_NAME}] {today}: {str(point_sum)} P Get"))
+        logger.info(f"[{SCRIPT_NAME}] {today}: {str(point_sum)} P Get")
 
 
 if __name__ == '__main__':
