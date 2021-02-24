@@ -1,6 +1,6 @@
 # UsappyGamePlay
 
-Play mini games of [Usappy](https://usappy.jp) automatically.
+Play mini games of [Usappy.jp](https://usappy.jp) automatically.
 
 
 ## Settings
@@ -27,7 +27,7 @@ Play mini games of [Usappy](https://usappy.jp) automatically.
 $ gcloud pubsub topics create usappy-game-topic
 ```
 
-### Create a Google Cloud Function.
+### Deploy as a Google Cloud Function.
 
 ```
 $ gcloud functions deploy usappy-game \
