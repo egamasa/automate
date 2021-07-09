@@ -52,7 +52,7 @@ def main(event={}, context={}):
             bs = BeautifulSoup(game_res.text, 'html.parser')
             result_text = bs.find("div", class_="mini_game").p.string
             point = re.search(r'\d+', result_text)
-            if point:
+            if point is not None:
                 point_sum += int(point.group())
 
         ses.get(LOGOUT_URL, cookies=cookie)
