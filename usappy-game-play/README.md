@@ -2,7 +2,6 @@
 
 Play mini games of [Usappy.jp](https://usappy.jp) automatically.
 
-
 ## Settings
 
 - **config.py**
@@ -18,7 +17,6 @@ Play mini games of [Usappy.jp](https://usappy.jp) automatically.
   - `PASS`  
     Password of Usappy account
 
-
 ## Deploy to Google Cloud Functions
 
 ### Create a Cloud Pub/Sub topic.
@@ -33,9 +31,9 @@ $ gcloud pubsub topics create usappy-game-topic
 $ gcloud functions deploy usappy-game \
     --entry-point=main \
     --memory=128MB \
-    --timeout=60 \
+    --timeout=120 \
     --runtime=python38 \
-    --region=asia-northeast1 \
+    --region=asia-northeast2 \
     --trigger-topic=usappy-game-topic \
     --env-vars-file=env.yaml
 ```

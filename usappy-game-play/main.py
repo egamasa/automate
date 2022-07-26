@@ -1,12 +1,10 @@
-# coding: utf-8
-
 import config
 import datetime
+import json
 import re
 import requests
 import time
 from bs4 import BeautifulSoup
-from logger import logger
 
 
 LOGIN_URL = 'https://usappy.jp/login'
@@ -26,6 +24,16 @@ LOGIN_DATA = {
 }
 SCRIPT_NAME = config.SCRIPT_NAME
 
+HEADER = {
+    'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                   'AppleWebKit/537.36 (KHTML, like Gecko) '
+                   'Chrome/103.0.0.0 Safari/537.36')
+}
+
+
+def log(severity, message):
+    print(json.dumps(dict(severity=severity, message=message)))
+
 
 def sleep():
     time.sleep(1)
@@ -38,19 +46,20 @@ def main(event={}, context={}):
 
     try:
         ses = requests.session()
-        res = ses.get(LOGIN_URL)
+        res = ses.get(LOGIN_URL, headers=HEADER)
         cookie = res.cookies
-        ses.post(LOGIN_URL, data=LOGIN_DATA, cookies=cookie)
+        ses.post(LOGIN_URL, data=LOGIN_DATA, cookies=cookie, headers=HEADER)
         sleep()
 
         for url in GAME_URL_LIST:
-            ses.get(url + START_ACT, cookies=cookie)
+            ses.get(url + START_ACT, cookies=cookie, headers=HEADER)
             sleep()
-            game_res = ses.get(url + RESULT_ACT, cookies=cookie)
+            game_res = ses.get(
+                url + RESULT_ACT, cookies=cookie, headers=HEADER)
             sleep()
 
             bs = BeautifulSoup(game_res.text, 'html.parser')
-            result_text = bs.find("div", class_="mini_game").p.string
+            result_text = bs.find("div", class_="mini_game").p.text
             point = re.search(r'\d+', result_text)
             if point is not None:
                 point_sum += int(point.group())
@@ -58,9 +67,9 @@ def main(event={}, context={}):
         ses.get(LOGOUT_URL, cookies=cookie)
 
     except requests.exceptions.RequestException as e:
-        logger.error(f"[{SCRIPT_NAME}] {e}")
+        log("ERROR", f"[{SCRIPT_NAME}] {e}")
     else:
-        logger.info(f"[{SCRIPT_NAME}] {today}: {str(point_sum)} P Get")
+        log("INFO", f"[{SCRIPT_NAME}] {today}: {str(point_sum)} P Get")
 
 
 if __name__ == '__main__':
