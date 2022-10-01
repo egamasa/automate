@@ -84,10 +84,10 @@ FunctionsFramework.cloud_event "main" do |event|
   hot_hashtags_text = hot_hashtags[0..9].map{ |tag| tag[0] }.join(', ')
 
   tweet_text =
-  "#{user_name} @#{screen_name}\n\
-  #{yesterday.strftime("%Y/%m/%d (%a.)")} のツイート数：#{count}（RT：#{retweet_count}）\n\
-  総ツイート数：#{total_tweets_count}\n\
-  #🔥 #{hot_hashtags_text}"
+    "#{user_name} @#{screen_name}\n"\
+    "#{yesterday.strftime("%Y/%m/%d (%a.)")} のツイート数：#{count}（RT：#{retweet_count}）\n"\
+    "総ツイート数：#{total_tweets_count}\n"\
+    "#🔥 #{hot_hashtags_text}"
 
   client.update(tweet_text)
 
