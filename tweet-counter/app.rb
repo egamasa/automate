@@ -86,7 +86,7 @@ FunctionsFramework.cloud_event "main" do |event|
   tweet_text =
     "#{user_name} @#{screen_name}\n"\
     "#{yesterday.strftime("%Y/%m/%d (%a.)")} のツイート数：#{count}（RT：#{retweet_count}）\n"\
-    "総ツイート数：#{total_tweets_count}\n"\
+    "総ツイート数：#{total_tweets_count}\n\n"\
     "#🔥 #{hot_hashtags_text}"
 
   client.update(tweet_text)
