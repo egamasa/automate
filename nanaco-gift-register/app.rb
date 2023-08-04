@@ -9,11 +9,8 @@ require './config.rb'
 GIFT_ID_FILE = './id.txt'
 LOG_FILE = './log.txt'
 
-USE_MOBILE = Config::USE_MOBILE
 CARD_NO = Config::CARD_NO.to_s
-CARD_PIN = Config::CARD_PIN.to_s
-MOBILE_CARD_NO = Config::MOBILE_CARD_NO.to_s
-MOBILE_PASSWORD = Config::MOBILE_PASSWORD.to_s
+CARD_PASSWORD = Config::PASSWORD.to_s
 
 
 module Output
@@ -106,7 +103,7 @@ def check_result(page)
   }
 end
 
-def wait(sec = 2)
+def wait(sec = 1)
   sleep sec
 end
 
@@ -119,14 +116,7 @@ end
 
 puts "=== nanacoギフトID一括登録 (#{Time.now}) ==="
 
-if USE_MOBILE
-  card_name = 'nanacoモバイル'
-  card_no = MOBILE_CARD_NO
-else
-  card_name = 'nanacoカード'
-  card_no = CARD_NO
-end
-puts "登録先: #{card_name} #{card_no.scan(/\d{4}/).join('-')}"
+puts "登録先nanaco番号: #{CARD_NO.scan(/\d{4}/).join('-')}"
 
 gift_id_list = load_gift_id()
 @total_count = gift_id_list.count
@@ -145,17 +135,10 @@ agent.max_history = 2
 page = agent.get('https://www.nanaco-net.jp/pc/emServlet?gid=')
 wait()
 
-if USE_MOBILE
-  form = page.form_with(name: 'formLoginPass')
-  form.XCID = MOBILE_CARD_NO
-  form.LOGIN_PWD = MOBILE_PASSWORD
-  button = form.button_with(name: 'ACT_ACBS_do_LOGIN1')
-else
-  form = page.form_with(name: 'formLoginCard')
-  form.XCID = CARD_NO
-  form.SECURITY_CD = CARD_PIN
-  button = form.button_with(name: 'ACT_ACBS_do_LOGIN2')
-end
+form = page.form_with(name: 'formLoginPass')
+form.XCID = CARD_NO
+form.LOGIN_PWD = CARD_PASSWORD
+button = form.button_with(name: 'ACT_ACBS_do_LOGIN1')
 
 member_page = agent.submit(form, button)
 wait()
