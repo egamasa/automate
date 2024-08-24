@@ -5,6 +5,7 @@ require "functions_framework"
 require "google/cloud/secret_manager"
 require "json"
 require "net/http"
+require "time"
 require "uri"
 
 class Line
@@ -55,7 +56,17 @@ end
 
 # Cloud Functions entry point -> function
 FunctionsFramework.cloud_event 'function' do |event|
-  msg = Base64.decode64(event.data["message"]["data"])
+  event_msg_json = Base64.decode64(event.data["message"]["data"])
+  event_msg = JSON.parse(event_msg_json)
+
+  event_text = event_msg["textPayload"]
+
+  event_time = event_msg["timestamp"]
+  utc_time = Time.parse(event_time)
+  jst_time = utc_time.getlocal('+09:00')
+
+  line_msg = "#{event_text}\n#{jst_time.strftime('%Y-%m-%d %H:%M:%S')}"
+
   line = Line.new
-  line.send_broadcast(msg.force_encoding("UTF-8"))
+  line.send_broadcast(line_msg.force_encoding("UTF-8"))
 end
